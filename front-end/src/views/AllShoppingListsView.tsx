@@ -4,7 +4,7 @@ export const AllShoppingListsView = () => {
   return (
     <Container>
       <Typography variant="h3" component="h1">
-        AllShoppingListsView
+        All Shopping Lists View
       </Typography>
     </Container>
   );

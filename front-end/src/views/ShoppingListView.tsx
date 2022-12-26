@@ -4,7 +4,7 @@ export const ShoppingListView = () => {
   return (
     <Container>
       <Typography variant="h3" component="h1">
-        ShoppingListView
+        Shopping List View
       </Typography>
     </Container>
   );
