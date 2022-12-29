@@ -1,5 +1,6 @@
 import express from "express";
 import { MongoClient } from "mongodb";
+import cors from "cors";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -23,7 +24,9 @@ const connectToMongo = async () => {
   }
 };
 
-app.get("/test", async (req, res) => {
+app.use(cors());
+
+app.get("/api/v1/shopping-lists", async (req, res) => {
   const db = await connectToMongo();
   const collection = db.collection("shopping-lists");
   const cursor = await collection.find();
