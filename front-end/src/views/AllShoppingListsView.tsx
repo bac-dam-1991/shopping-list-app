@@ -1,12 +1,8 @@
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Stack } from "@mui/material";
 import { ShoppingListForm } from "../forms/ShoppingListForm";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
-interface ShoppingList {
-  _id: string;
-  name: string;
-}
+import { ShoppingList, ShoppingListCard } from "../components/ShoppingListCard";
 
 export const AllShoppingListsView = () => {
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
@@ -26,13 +22,15 @@ export const AllShoppingListsView = () => {
 
   return (
     <Container>
-      <Typography variant="h3" component="h1" sx={{ mb: 5 }}>
-        Shopping Lists
-      </Typography>
-      <ShoppingListForm />
-      {shoppingLists.map((list) => {
-        return <Typography key={list._id}>{list.name}</Typography>;
-      })}
+      <Stack spacing={2}>
+        <Typography variant="h3" component="h1" sx={{ mb: 5 }}>
+          Shopping Lists
+        </Typography>
+        <ShoppingListForm />
+        {shoppingLists.map((list) => {
+          return <ShoppingListCard key={list._id} data={list} />;
+        })}
+      </Stack>
     </Container>
   );
 };
