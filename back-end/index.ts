@@ -1,5 +1,5 @@
 import express from "express";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import cors from "cors";
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,6 +32,20 @@ app.get("/api/v1/shopping-lists", async (req, res) => {
   const cursor = await collection.find();
   const docs = await cursor.toArray();
   res.status(200).json(docs);
+});
+
+app.get("/api/v1/shopping-lists/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    throw new Error("Shopping list id was not provided.");
+  }
+  const db = await connectToMongo();
+  const collection = db.collection("shopping-lists");
+  const doc = await collection.findOne({ _id: new ObjectId(id) });
+  if (!doc) {
+    throw new Error("Could not shopping list matching provided Id");
+  }
+  res.status(200).json(doc);
 });
 
 app.listen(PORT, () => {

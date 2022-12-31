@@ -23,7 +23,7 @@ export const AllShoppingListsView = () => {
   return (
     <Container>
       <Stack spacing={2}>
-        <Typography variant="h3" component="h1" sx={{ mb: 5 }}>
+        <Typography variant="h4" component="h1" sx={{ mb: 5 }}>
           Shopping Lists
         </Typography>
         <ShoppingListForm />
