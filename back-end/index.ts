@@ -25,6 +25,7 @@ const connectToMongo = async () => {
 };
 
 app.use(cors());
+app.use(express.json());
 
 app.get("/api/v1/shopping-lists", async (req, res) => {
   const db = await connectToMongo();
@@ -46,6 +47,14 @@ app.get("/api/v1/shopping-lists/:id", async (req, res) => {
     throw new Error("Could not shopping list matching provided Id");
   }
   res.status(200).json(doc);
+});
+
+app.post("/api/v1/shopping-lists", async (req, res) => {
+  const { name } = req.body;
+  const db = await connectToMongo();
+  const collection = db.collection("shopping-lists");
+  const result = await collection.insertOne({ name, items: [] });
+  res.status(201).json({ _id: result.insertedId, name, items: [] });
 });
 
 app.listen(PORT, () => {
