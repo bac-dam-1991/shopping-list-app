@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 export interface ShoppingList {
   _id: string;
   name: string;
+  item: any[];
 }
 
 export interface ShoppingListCardProps {

@@ -22,7 +22,7 @@ export const ShoppingListView = () => {
       }
     };
     getAllShoppingLists();
-  }, []);
+  }, [id]);
 
   return (
     <Container>
