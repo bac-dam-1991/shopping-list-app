@@ -29,7 +29,13 @@ export const AllShoppingListsView = () => {
         </Typography>
         <ShoppingListForm onFinish={getAllShoppingLists} />
         {shoppingLists.map((list) => {
-          return <ShoppingListCard key={list._id} data={list} />;
+          return (
+            <ShoppingListCard
+              key={list._id}
+              data={list}
+              onFinish={getAllShoppingLists}
+            />
+          );
         })}
       </Stack>
     </Container>
