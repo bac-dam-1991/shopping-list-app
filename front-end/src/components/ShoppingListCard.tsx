@@ -1,15 +1,10 @@
 import { Typography, Paper, IconButton, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { useState, MouseEvent, MouseEventHandler } from "react";
-import Button from "@mui/material/Button";
-import DialogActions from "@mui/material/DialogActions";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
+import { useState, MouseEventHandler } from "react";
 import axios from "axios";
-import { LoadingButton } from "@mui/lab";
 import { Modal } from "./Modal";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 
 export type ModalIds = "delete-shopping-list-modal";
 
@@ -22,9 +17,14 @@ export interface ShoppingList {
 export interface ShoppingListCardProps {
   data: ShoppingList;
   onFinish: () => Promise<void>;
+  onEdit: () => void;
 }
 
-export const ShoppingListCard = ({ data, onFinish }: ShoppingListCardProps) => {
+export const ShoppingListCard = ({
+  data,
+  onFinish,
+  onEdit,
+}: ShoppingListCardProps) => {
   const navigate = useNavigate();
   const [modalToOpen, setModalToOpen] = useState<ModalIds | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -62,6 +62,16 @@ export const ShoppingListCard = ({ data, onFinish }: ShoppingListCardProps) => {
     >
       <Stack direction="row" alignItems={"center"}>
         <Typography sx={{ flexGrow: 1 }}>{data.name}</Typography>
+        <IconButton
+          aria-label="edit"
+          color="default"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+        >
+          <EditRoundedIcon />
+        </IconButton>
         <IconButton
           aria-label="delete"
           color="error"

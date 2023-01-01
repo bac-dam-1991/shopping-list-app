@@ -1,40 +1,28 @@
 import { TextField, Stack } from "@mui/material";
-import axios from "axios";
 import { useForm } from "react-hook-form";
-import { ShoppingList } from "../components/ShoppingListCard";
-import { useState } from "react";
 
 export const ShoppingListFormId = "shopping-list-form-id";
 
-interface ShoppingListFormFields {
+export interface ShoppingListFormFields {
   name: string;
 }
 
 export interface ShoppingListFormProps {
-  onFinish: () => Promise<void>;
   formId: string;
+  onSubmit: (data: ShoppingListFormFields) => Promise<void>;
+  loading?: boolean;
+  defaultValues?: ShoppingListFormFields;
 }
 
 export const ShoppingListForm = ({
-  onFinish,
+  onSubmit,
   formId,
+  loading,
+  defaultValues,
 }: ShoppingListFormProps) => {
-  const { register, handleSubmit, reset } = useForm<ShoppingListFormFields>();
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const onSubmit = async (data: ShoppingListFormFields) => {
-    try {
-      setLoading(true);
-      const url = "http://localhost:3001/api/v1/shopping-lists";
-      await axios.post<ShoppingList>(url, data);
-      await onFinish();
-      reset();
-    } catch (error) {
-      console.error((error as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { register, handleSubmit } = useForm<ShoppingListFormFields>({
+    defaultValues,
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} id={formId}>
@@ -45,6 +33,7 @@ export const ShoppingListForm = ({
           fullWidth
           size="small"
           {...register("name")}
+          disabled={loading}
         />
       </Stack>
     </form>
