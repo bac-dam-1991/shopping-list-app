@@ -5,6 +5,8 @@ import { useState, MouseEventHandler } from "react";
 import axios from "axios";
 import { Modal } from "./Modal";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import { useSnackbar } from "notistack";
+import { extractErrorMessage } from "../apis";
 
 export type ModalIds = "delete-shopping-list-modal";
 
@@ -28,6 +30,7 @@ export const ShoppingListCard = ({
   const navigate = useNavigate();
   const [modalToOpen, setModalToOpen] = useState<ModalIds | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const closeAllModals: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
@@ -43,7 +46,8 @@ export const ShoppingListCard = ({
       await onFinish();
       closeAllModals(e);
     } catch (error) {
-      console.error((error as Error).message);
+      const message = extractErrorMessage(error);
+      enqueueSnackbar(message, { variant: "error" });
     } finally {
       setLoading(false);
     }
