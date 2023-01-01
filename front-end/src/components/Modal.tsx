@@ -1,5 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -15,6 +16,7 @@ export interface ModalProps extends DialogProps {
   onConfirm?: MouseEventHandler<HTMLButtonElement>;
   title: string;
   buttonLabels?: { cancelButton: string; confirmButton: string };
+  formId?: string;
 }
 
 export const Modal = ({
@@ -24,23 +26,28 @@ export const Modal = ({
   children,
   title,
   buttonLabels,
+  formId,
   ...rest
 }: ModalProps) => {
   return (
-    <Dialog {...rest}>
+    <Dialog maxWidth="xs" fullWidth {...rest}>
       <DialogTitle>{title}</DialogTitle>
-      <DialogContent>{children}</DialogContent>
+      <DialogContent>
+        <Box sx={{ py: 1 }}>{children}</Box>
+      </DialogContent>
       <DialogActions>
         {onCancel && (
           <Button disabled={loading} onClick={onCancel}>
             {buttonLabels ? buttonLabels.cancelButton : "Cancel"}
           </Button>
         )}
-        {onConfirm && (
+        {(onConfirm || formId) && (
           <LoadingButton
             loading={loading}
             onClick={onConfirm}
             variant="contained"
+            form={formId}
+            type="submit"
           >
             {buttonLabels ? buttonLabels.confirmButton : "Confirm"}
           </LoadingButton>
