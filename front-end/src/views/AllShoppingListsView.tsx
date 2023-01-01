@@ -4,11 +4,13 @@ import {
   ShoppingListFormId,
   ShoppingListFormFields,
 } from "../forms/ShoppingListForm";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Modal } from "../components/Modal";
 import { useEffect, useState, useCallback, MouseEventHandler } from "react";
 import { ShoppingList, ShoppingListCard } from "../components/ShoppingListCard";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import { useSnackbar } from "notistack";
+import { extractErrorMessage } from "../apis";
 
 type ModalIds = "add-shopping-list-modal" | "edit-shopping-list-modal";
 
@@ -18,6 +20,7 @@ export const AllShoppingListsView = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedShoppingList, setSelectedShoppingList] =
     useState<ShoppingList | null>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const getAllShoppingLists = useCallback(async () => {
     try {
@@ -25,7 +28,8 @@ export const AllShoppingListsView = () => {
       const response = await axios.get<ShoppingList[]>(url);
       setShoppingLists(response.data);
     } catch (error) {
-      console.error((error as Error).message);
+      const message = extractErrorMessage(error);
+      enqueueSnackbar(message, { variant: "error" });
     }
   }, []);
 
@@ -46,7 +50,8 @@ export const AllShoppingListsView = () => {
       await getAllShoppingLists();
       setModalToOpen(null);
     } catch (error) {
-      console.error((error as Error).message);
+      const message = extractErrorMessage(error);
+      enqueueSnackbar(message, { variant: "error" });
     } finally {
       setLoading(false);
     }
@@ -64,7 +69,8 @@ export const AllShoppingListsView = () => {
       setModalToOpen(null);
       setSelectedShoppingList(null);
     } catch (error) {
-      console.error((error as Error).message);
+      const message = extractErrorMessage(error);
+      enqueueSnackbar(message, { variant: "error" });
     } finally {
       setLoading(false);
     }

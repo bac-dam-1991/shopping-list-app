@@ -3,10 +3,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { ShoppingList } from "../components/ShoppingListCard";
+import { useSnackbar } from "notistack";
+import { extractErrorMessage } from "../apis";
 
 export const ShoppingListView = () => {
   const { id } = useParams();
   const [shoppingList, setShoppingList] = useState<ShoppingList | null>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (!id) {
@@ -18,7 +21,8 @@ export const ShoppingListView = () => {
         const response = await axios.get<ShoppingList>(url);
         setShoppingList(response.data);
       } catch (error) {
-        console.error((error as Error).message);
+        const message = extractErrorMessage(error);
+        enqueueSnackbar(message, { variant: "error" });
       }
     };
     getAllShoppingLists();
