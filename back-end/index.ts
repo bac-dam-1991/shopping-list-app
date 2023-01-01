@@ -57,6 +57,24 @@ app.post("/api/v1/shopping-lists", async (req, res) => {
   res.status(201).json({ _id: result.insertedId, name, items: [] });
 });
 
+app.put("/api/v1/shopping-lists/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    throw new Error("Shopping list id was not provided.");
+  }
+  const { name } = req.body;
+  const db = await connectToMongo();
+  const collection = db.collection("shopping-lists");
+  const result = await collection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { name } }
+  );
+  if (result.modifiedCount !== 1) {
+    throw new Error("Unable to modify shopping list.");
+  }
+  res.status(201).json(result);
+});
+
 app.delete("/api/v1/shopping-lists/:id", async (req, res) => {
   const { id } = req.params;
   if (!id) {

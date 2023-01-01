@@ -2,6 +2,7 @@ import { Container, Typography, Stack, IconButton } from "@mui/material";
 import {
   ShoppingListForm,
   ShoppingListFormId,
+  ShoppingListFormFields,
 } from "../forms/ShoppingListForm";
 import axios from "axios";
 import { Modal } from "../components/Modal";
@@ -9,11 +10,14 @@ import { useEffect, useState, useCallback, MouseEventHandler } from "react";
 import { ShoppingList, ShoppingListCard } from "../components/ShoppingListCard";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 
-type ModalIds = "add-shopping-list-modal";
+type ModalIds = "add-shopping-list-modal" | "edit-shopping-list-modal";
 
 export const AllShoppingListsView = () => {
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
   const [modalToOpen, setModalToOpen] = useState<ModalIds | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedShoppingList, setSelectedShoppingList] =
+    useState<ShoppingList | null>(null);
 
   const getAllShoppingLists = useCallback(async () => {
     try {
@@ -32,6 +36,38 @@ export const AllShoppingListsView = () => {
   const closeAllModals: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     setModalToOpen(null);
+  };
+
+  const addShoppingList = async (data: ShoppingListFormFields) => {
+    try {
+      setLoading(true);
+      const url = "http://localhost:3001/api/v1/shopping-lists";
+      await axios.post<ShoppingList>(url, data);
+      await getAllShoppingLists();
+      setModalToOpen(null);
+    } catch (error) {
+      console.error((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const editShoppingList = async (data: ShoppingListFormFields) => {
+    if (!selectedShoppingList) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const url = `http://localhost:3001/api/v1/shopping-lists/${selectedShoppingList._id}`;
+      await axios.put<ShoppingList>(url, data);
+      await getAllShoppingLists();
+      setModalToOpen(null);
+      setSelectedShoppingList(null);
+    } catch (error) {
+      console.error((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,9 +93,23 @@ export const AllShoppingListsView = () => {
         >
           <ShoppingListForm
             formId={ShoppingListFormId}
-            onFinish={async () => {
-              await getAllShoppingLists();
-              setModalToOpen(null);
+            onSubmit={addShoppingList}
+            loading={loading}
+          />
+        </Modal>
+        <Modal
+          title={"Edit shopping list"}
+          open={modalToOpen === "edit-shopping-list-modal"}
+          onCancel={closeAllModals}
+          onClose={closeAllModals}
+          formId={ShoppingListFormId}
+        >
+          <ShoppingListForm
+            formId={ShoppingListFormId}
+            onSubmit={editShoppingList}
+            loading={loading}
+            defaultValues={{
+              name: selectedShoppingList ? selectedShoppingList.name : "",
             }}
           />
         </Modal>
@@ -69,6 +119,10 @@ export const AllShoppingListsView = () => {
               key={list._id}
               data={list}
               onFinish={getAllShoppingLists}
+              onEdit={() => {
+                setModalToOpen("edit-shopping-list-modal");
+                setSelectedShoppingList(list);
+              }}
             />
           );
         })}
