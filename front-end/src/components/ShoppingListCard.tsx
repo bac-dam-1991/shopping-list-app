@@ -81,8 +81,8 @@ export const ShoppingListCard = ({ data, onFinish }: ShoppingListCardProps) => {
         loading={loading}
         title={"Are you sure?"}
       >
-        Deleting this shopping list will delete all items within it. This is not
-        reversible.
+        Deleting this shopping list will delete all shopping list items within
+        it. This is not reversible.
       </Modal>
     </Paper>
   );
