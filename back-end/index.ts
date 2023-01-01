@@ -44,7 +44,7 @@ app.get("/api/v1/shopping-lists/:id", async (req, res) => {
   const collection = db.collection("shopping-lists");
   const doc = await collection.findOne({ _id: new ObjectId(id) });
   if (!doc) {
-    throw new Error("Could not shopping list matching provided Id");
+    throw new Error("Could not find shopping list matching provided Id");
   }
   res.status(200).json(doc);
 });
@@ -55,6 +55,20 @@ app.post("/api/v1/shopping-lists", async (req, res) => {
   const collection = db.collection("shopping-lists");
   const result = await collection.insertOne({ name, items: [] });
   res.status(201).json({ _id: result.insertedId, name, items: [] });
+});
+
+app.delete("/api/v1/shopping-lists/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    throw new Error("Shopping list id was not provided.");
+  }
+  const db = await connectToMongo();
+  const collection = db.collection("shopping-lists");
+  const doc = await collection.deleteOne({ _id: new ObjectId(id) });
+  if (doc.deletedCount !== 1) {
+    throw new Error("Could not delete shopping list matching provided Id");
+  }
+  res.status(200).json(doc);
 });
 
 app.listen(PORT, () => {
