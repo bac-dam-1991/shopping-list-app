@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import axios from "axios";
 import { LoadingButton } from "@mui/lab";
+import { Modal } from "./Modal";
 
 export type ModalIds = "delete-shopping-list-modal";
 
@@ -72,28 +73,17 @@ export const ShoppingListCard = ({ data, onFinish }: ShoppingListCardProps) => {
           <DeleteForeverRoundedIcon />
         </IconButton>
       </Stack>
-      <Dialog
+      <Modal
         open={modalToOpen === "delete-shopping-list-modal"}
         onClose={loading ? undefined : closeAllModals}
+        onCancel={closeAllModals}
+        onConfirm={handleDelete}
+        loading={loading}
+        title={"Are you sure?"}
       >
-        <DialogTitle>Are you sure?</DialogTitle>
-        <DialogContent>
-          Deleting this shopping list will delete all items within it. This is
-          not reversible.
-        </DialogContent>
-        <DialogActions>
-          <Button disabled={loading} onClick={closeAllModals}>
-            Cancel
-          </Button>
-          <LoadingButton
-            loading={loading}
-            onClick={handleDelete}
-            variant="contained"
-          >
-            Confirm
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+        Deleting this shopping list will delete all shopping list items within
+        it. This is not reversible.
+      </Modal>
     </Paper>
   );
 };
