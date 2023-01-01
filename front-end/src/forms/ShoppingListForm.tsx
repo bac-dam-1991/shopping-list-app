@@ -1,9 +1,10 @@
 import { TextField, Stack } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { ShoppingList } from "../components/ShoppingListCard";
 import { useState } from "react";
+
+export const ShoppingListFormId = "shopping-list-form-id";
 
 interface ShoppingListFormFields {
   name: string;
@@ -11,9 +12,13 @@ interface ShoppingListFormFields {
 
 export interface ShoppingListFormProps {
   onFinish: () => Promise<void>;
+  formId: string;
 }
 
-export const ShoppingListForm = ({ onFinish }: ShoppingListFormProps) => {
+export const ShoppingListForm = ({
+  onFinish,
+  formId,
+}: ShoppingListFormProps) => {
   const { register, handleSubmit, reset } = useForm<ShoppingListFormFields>();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -32,7 +37,7 @@ export const ShoppingListForm = ({ onFinish }: ShoppingListFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} id={formId}>
       <Stack spacing={2}>
         <TextField
           label="Name"
@@ -41,14 +46,6 @@ export const ShoppingListForm = ({ onFinish }: ShoppingListFormProps) => {
           size="small"
           {...register("name")}
         />
-        <LoadingButton
-          variant="contained"
-          fullWidth
-          type="submit"
-          loading={loading}
-        >
-          Add
-        </LoadingButton>
       </Stack>
     </form>
   );
